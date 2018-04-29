@@ -11,29 +11,46 @@ function comments(state = [], action) {
                 id: action.id,
                 text: action.text,
                 votes: 0
-            }, ...state.comments];
+            }, ...state];
 
         case REMOVE_COMMENT:
             return {
-                comments: state.comments.filter(comment => comment.id !== action.id)
+                comments: state.filter(comment => comment.id !== action.id)
             };
         case EDIT_COMMENT:
-            return {
-                Object.assign({}, comment, {
-                    text: action.text
-                })
-            }
-        case THUMB_UP_COMMENT:
-            return {
-                Object.assign({}, comment, { votes: state.votes + 1 });
-            }
+            return state.map(comment => {
+                        if (comment.id === action.id) {
+                            Object.assign({}, comment, {
+                                text: action.text
+                            });
+                        } else {
+                            return comment;
+                        }
+                    }
+                    case THUMB_UP_COMMENT:
+                        return state.map(comment => {
+                                if (comment.id === action.id) {
+                                    return Object.assign({}, comment, {
+                                        votes: comment.votes + 1
+                                    });
 
-        case THUMB_DOWN_COMMENT:
-            return {
-                Object.assign({}, comment, { counter: state.votes - 1 });
-            }
-    }
-    default:
-    return state;
-}
-}
+                                } else {
+                                    return comment;
+                                }
+                            }
+                            case THUMB_DOWN_COMMENT:
+                                return state.map(comment => {
+                                        if (comment.id === action.id) {
+                                            Object.assign({}, comment, {
+                                                votes: comment.votes - 1
+                                            });
+
+                                        } else {
+                                            return comment;
+                                        }
+                                    }
+                                    default:
+                                    return state;
+                                }
+
+                        }
